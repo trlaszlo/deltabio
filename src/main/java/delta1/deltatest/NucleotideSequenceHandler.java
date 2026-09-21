@@ -77,7 +77,47 @@ public class NucleotideSequenceHandler {
     public boolean containsSubstring(NucleotideSequence mainSeq, NucleotideSequence subSeq) {
         return mainSeq.getSequence().contains(subSeq.getSequence());
     }
+//
+    public void gcRendezes() {
+        for (int i = 0; i < sequences.size(); i++) {
+            for (int j = i + 1; j < sequences.size(); j++) {
+                NucleotideSequence seq1 = sequences.get(i);
+                NucleotideSequence seq2 = sequences.get(j);
 
+                if (seq1.getGcContent() < seq2.getGcContent()) {
+                    sequences.set(i, seq2);
+                    sequences.set(j, seq1);
+                }
+            }
+        }
+
+        System.out.println();
+        System.out.println("--- GC-tartalom csokkeno sorrendben ---");
+        for (NucleotideSequence seq : sequences) {
+            System.out.println("Nev: " + seq.getHeader() + " | GC-arany: " + seq.getGcContent());
+        }
+    }
+
+    public void hasitohelyKereso(String site) {
+        int totalOccurrences = 0;
+
+        for (NucleotideSequence seq : sequences) {
+            String s = seq.getSequence();
+            int siteLength = site.length();
+
+            for (int i = 0; i <= s.length() - siteLength; i++) {
+                String fragment = s.substring(i, i + siteLength);
+                if (fragment.equals(site)) {
+                    totalOccurrences++;
+                }
+            }
+        }
+
+        System.out.println();
+        System.out.println("--- Endonukleaz ('" + site + "') talalatok ---");
+        System.out.println("Osszesen " + totalOccurrences + " alkalommal talalhato meg a fajlban.");
+    }
+    
     public List<NucleotideSequence> getSequences() {
         return sequences;
     }
@@ -95,5 +135,7 @@ public class NucleotideSequenceHandler {
         for (NucleotideSequence seq : handler.getSequences()) {
             System.out.println("Name: " + seq.getHeader() + " | Length: " + seq.getLength());
         }
+        handler.gcRendezes();
+        handler.hasitohelyKereso("TTTAAA");
     }
 }
